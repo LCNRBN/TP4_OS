@@ -1,6 +1,6 @@
 SRC = $(wildcard *.c)
 BIN = $(patsubst %.c,%,$(SRC))
-
+LIBS = -L. -lseg
 CFLAGS += -Wall -Wextra -g
 #CFLAGS += --std=c99
 
@@ -14,4 +14,4 @@ clean:
 indent:
 	indent -linux -i4 -nut -ts2 *.c
 
-.PHONY: all clean indent
+.PHONY: all clean indent	
