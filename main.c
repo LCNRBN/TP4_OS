@@ -74,7 +74,7 @@ void mylib_sem(int id, int sem){
 int init(int* shmid, int* semid, segment** seg){
     key_t key = cle;
 
-    if((*semid = semget(key, 0, 0)) == -1){
+    if((*semid = semget(key, 3, 0)) == -1){
         perror("semget");
         exit(1);
     }
@@ -134,3 +134,20 @@ int main(){
 
     return 0;
 }
+
+ipcs
+
+// ------ Files de messages --------
+// clef       msqid      propriétaire perms      octets utilisés messages    
+
+// ------ Segment de mémoire partagée --------
+// clef       shmid      propriétaire perms      octets     nattch     états      
+// 0x00000000 8          lucian     606        5324604    2          dest         
+// 0x00000000 9          lucian     606        5324604    2          dest         
+// 0x00000003 11         lucian     666        816        1                       
+// 0x00000000 65581      lucian     600        524288     2          dest         
+// 0x00000000 32822      lucian     600        524288     2          dest         
+
+// ------ Tableaux de sémaphores --------
+// clef       semid      propriétaire perms      nsems     
+// 0x00000003 2          lucian     666        3     
