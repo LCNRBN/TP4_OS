@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+
 #include <sys/ipc.h>
+
 #include <sys/sem.h>
+
 #include <sys/shm.h>
 #include <sys/shm.h>
 #include "segdef.h"
@@ -28,6 +31,45 @@ int shmid;
 //         exit(1);
 //     }
 // }
+
+void myacq_sem(int id, int sem){
+    
+    struct sembuf sop;
+    sop.sem_flg = SEM_UNDO;
+    sop.sem_num = sem;
+    sop.sem_op = -1; //acquires sem
+
+    if(semop(id, &sop, 1) == -1){
+        perror("semop");
+        exit(1);
+    }
+}
+
+void mywait_sem(int id, int sem){
+    
+    struct sembuf sop;
+    sop.sem_flg = SEM_UNDO;
+    sop.sem_num = sem;
+    sop.sem_op = 0; //waits sem 0
+
+    if(semop(id, &sop, 1) == -1){
+        perror("semop");
+        exit(1);
+    }
+}
+
+void mylib_sem(int id, int sem){
+    
+    struct sembuf sop;
+    sop.sem_flg = SEM_UNDO;
+    sop.sem_num = sem;
+    sop.sem_op = 1; //frees sem 0
+
+    if(semop(id, &sop, 1) == -1){
+        perror("semop");
+        exit(1);
+    }
+}
 
 int init(int* shmid, int* semid, segment** seg){
     key_t key = cle;
@@ -62,7 +104,7 @@ int main(){
     int i = 0;
     
     while(i < 10000){
-        acq_sem(semid, seg_dispo);
+        myacq_sem(semid, seg_dispo);
 
         seg->pid = getpid();
         seg->req = i;
@@ -73,12 +115,12 @@ int main(){
         }
         long average = sum/maxval;
 
-        acq_sem(semid, seg_init);
-        wait_sem(semid, res_ok);
-        lib_sem(semid, seg_init);
-        acq_sem(semid, res_ok);
-        lib_sem(semid,res_ok);
-        lib_sem(semid, seg_dispo);
+        myacq_sem(semid, seg_init);
+        mywait_sem(semid, res_ok);
+        mylib_sem(semid, seg_init);
+        myacq_sem(semid, res_ok);
+        mylib_sem(semid,res_ok);
+        mylib_sem(semid, seg_dispo);
         printf("Step %d : \n", i);
         printf("average client : %ld \n", average);
         printf("average server : %ld \n", seg->result);
