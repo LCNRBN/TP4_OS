@@ -1,10 +1,13 @@
 SRC = $(wildcard *.c)
-BIN = $(patsubst %.c,%,$(SRC))
-LIBS = -L. -lseg
+BIN = main
+LDLIBS := -lseg
+LDFLAGS := -L.
 CFLAGS += -Wall -Wextra -g
 #CFLAGS += --std=c99
 
 all: $(BIN)
+
+main.o: main.c segdef.h
 
 clean:
 	rm -f $(BIN)
