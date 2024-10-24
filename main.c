@@ -135,7 +135,7 @@ int main(){
     return 0;
 }
 
-ipcs
+// ipcs
 
 // ------ Files de messages --------
 // clef       msqid      propriétaire perms      octets utilisés messages    
